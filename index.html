@@ -1,0 +1,1204 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VIP Typing Master V7.0</title>
+
+<style>
+:root{
+ --bg:#090b10;
+ --panel:#121722;
+ --panel2:#192130;
+ --gold:#e7b84b;
+ --text:#f4f4f4;
+ --muted:#9ba6b5;
+ --green:#20c982;
+ --red:#ff5263;
+ --blue:#438cff;
+ --border:rgba(255,255,255,.09);
+}
+*{box-sizing:border-box}
+body{
+ margin:0;background:var(--bg);color:var(--text);
+ font-family:Segoe UI,Arial,sans-serif;
+}
+button,input,select{font:inherit}
+button{cursor:pointer;border:0}
+.app{display:flex;min-height:100vh}
+.sidebar{
+ width:245px;background:#0d111a;padding:24px 16px;
+ border-right:1px solid var(--border);
+ display:flex;flex-direction:column;flex-shrink:0;
+}
+.brand{text-align:center;margin-bottom:30px}
+.brand-icon{font-size:35px;color:var(--gold)}
+.brand h2{font-size:19px;margin:8px 0 3px;letter-spacing:1px}
+.brand p{font-size:10px;color:var(--gold);letter-spacing:3px;margin:0}
+.nav-title{font-size:10px;color:#687386;margin:16px 12px 8px}
+.nav-btn{
+ display:flex;align-items:center;gap:12px;width:100%;
+ background:transparent;color:#aeb8c8;padding:13px 14px;
+ border-radius:10px;text-align:left;margin:3px 0;
+ transition:.2s;
+}
+.nav-btn:hover,.nav-btn.active{
+ background:linear-gradient(90deg,rgba(231,184,75,.2),transparent);
+ color:var(--gold);
+}
+.sidebar-footer{margin-top:auto;text-align:center;color:#697486;font-size:11px;line-height:1.8}
+.main{flex:1;min-width:0;padding:25px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;gap:15px}
+.topbar h1{font-size:24px;margin:0}
+.top-profile{display:flex;align-items:center;gap:10px}
+.avatar{width:43px;height:43px;border-radius:50%;object-fit:cover;border:2px solid var(--gold)}
+.avatar-fallback{display:flex;align-items:center;justify-content:center;background:#242b39;font-size:23px}
+.page{display:none;animation:fade .3s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}
+.card{
+ background:var(--panel);border:1px solid var(--border);
+ border-radius:15px;padding:20px;margin-bottom:17px;
+}
+.stat-card{position:relative;overflow:hidden}
+.stat-card:after{
+ content:"";position:absolute;width:90px;height:90px;
+ border-radius:50%;background:rgba(231,184,75,.07);
+ right:-25px;top:-30px;
+}
+.stat-label{font-size:12px;color:var(--muted)}
+.stat-value{font-size:28px;font-weight:800;margin:10px 0 3px}
+.stat-icon{font-size:21px;color:var(--gold)}
+.section-title{font-size:18px;margin:0 0 18px}
+.gold{color:var(--gold)}
+.muted{color:var(--muted)}
+.welcome{
+ display:flex;justify-content:space-between;align-items:center;
+ background:linear-gradient(120deg,#22202a,#171b27 60%,#332716);
+ border:1px solid rgba(231,184,75,.2);
+}
+.welcome h2{font-size:24px;margin:0 0 8px}
+.welcome p{color:#b9b9c0;margin:0}
+.welcome-icon{font-size:65px}
+.progress{height:9px;background:#293141;border-radius:20px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold),#fff0a5);border-radius:20px;transition:.3s}
+.action-buttons{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px}
+.gold-btn,.dark-btn,.danger-btn{
+ padding:11px 17px;border-radius:9px;font-weight:700;
+}
+.gold-btn{background:var(--gold);color:#17130a}
+.dark-btn{background:#273144;color:#fff;border:1px solid var(--border)}
+.danger-btn{background:#4b2029;color:#ffb3bb}
+.gold-btn:hover,.dark-btn:hover,.danger-btn:hover{filter:brightness(1.12)}
+select,input[type="text"],input[type="number"]{
+ background:#202a39;color:#fff;border:1px solid var(--border);
+ padding:10px;border-radius:8px;outline:none;
+}
+.field{display:flex;flex-direction:column;gap:7px;margin:10px 0}
+.field label{font-size:12px;color:var(--muted)}
+.practice-options{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:15px}
+.practice-options select{min-width:130px}
+.typing-text{
+ background:#0d121c;border:1px solid var(--border);
+ border-radius:12px;padding:22px;min-height:125px;
+ font-size:21px;line-height:1.9;letter-spacing:.3px;
+ direction:ltr;text-align:left;
+}
+.typing-text span.correct{color:var(--green)}
+.typing-text span.wrong{color:var(--red);background:rgba(255,82,99,.15)}
+.typing-text span.current{border-bottom:2px solid var(--gold)}
+#typingInput{
+ width:100%;min-height:105px;resize:vertical;
+ background:#111927;color:white;border:1px solid var(--border);
+ padding:15px;border-radius:10px;margin-top:13px;
+ font-size:17px;outline:none;
+}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:15px 0}
+.metric{background:#1a2230;padding:13px;border-radius:10px;text-align:center}
+.metric strong{display:block;font-size:23px;color:var(--gold)}
+.metric small{color:var(--muted)}
+.keyboard{display:grid;gap:5px;margin-top:15px;direction:ltr}
+.key-row{display:flex;justify-content:center;gap:5px}
+.key{
+ min-width:28px;height:38px;padding:0 7px;
+ background:#252f40;color:#dce2eb;border-radius:5px;
+ display:flex;align-items:center;justify-content:center;
+ font-size:12px;border:1px solid rgba(255,255,255,.06);
+}
+.key.next{background:var(--gold);color:#17130a;box-shadow:0 0 14px rgba(231,184,75,.5)}
+.key.correct-key{background:var(--green);color:#062517}
+.key.wrong-key{background:var(--red);color:white}
+.key.space{width:240px}
+.finger-guide{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:15px}
+.finger{
+ padding:9px 12px;border-radius:8px;background:#222c3b;
+ color:#c7d0dc;font-size:11px;
+}
+.result-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.result-card{
+ background:linear-gradient(145deg,#202a39,#111722);
+ border:1px solid rgba(231,184,75,.23);
+ border-radius:15px;padding:19px;
+ box-shadow:0 12px 25px rgba(0,0,0,.25);
+ transform:perspective(700px) rotateX(0deg);
+ animation:cardIn .55s ease both;
+ transition:transform .25s,box-shadow .25s;
+}
+.result-card:hover{
+ transform:perspective(700px) rotateX(4deg) translateY(-5px);
+ box-shadow:0 18px 32px rgba(231,184,75,.12);
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(20px) rotateX(-8deg)}to{opacity:1;transform:translateY(0) rotateX(0)}}
+.result-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}
+.result-wpm{font-size:32px;font-weight:900;color:var(--gold)}
+.result-details{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.result-details div{background:rgba(255,255,255,.045);padding:9px;border-radius:8px}
+.result-details small{display:block;color:var(--muted);font-size:10px}
+.result-details b{font-size:15px}
+.empty{text-align:center;color:var(--muted);padding:35px}
+.chart{height:190px;display:flex;align-items:end;gap:12px;padding:15px 5px 0}
+.chart-col{flex:1;text-align:center;min-width:0}
+.chart-bar{width:100%;max-width:38px;margin:auto;background:linear-gradient(0deg,#9b6b17,var(--gold));border-radius:7px 7px 0 0;min-height:3px;transition:.4s}
+.chart-col small{font-size:10px;color:var(--muted);display:block;margin-top:8px}
+.achievement-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.achievement{
+ background:#1b2533;border:1px solid var(--border);
+ border-radius:12px;padding:16px;text-align:center;
+}
+.achievement.locked{opacity:.38;filter:grayscale(1)}
+.achievement .medal{font-size:29px}
+.achievement h3{font-size:13px;margin:8px 0 4px}
+.achievement p{font-size:11px;color:var(--muted);margin:0}
+.about-profile{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.about-photo{width:110px;height:110px;border-radius:18px;object-fit:cover;border:2px solid var(--gold)}
+.setting-row{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:14px 0;border-bottom:1px solid var(--border)}
+.switch{width:44px;height:24px;appearance:none;background:#414b5b;border-radius:20px;position:relative;cursor:pointer}
+.switch:checked{background:var(--green)}
+.switch:before{content:"";position:absolute;width:18px;height:18px;background:white;border-radius:50%;top:3px;left:3px;transition:.2s}
+.switch:checked:before{left:23px}
+.theme-options{display:flex;gap:10px;flex-wrap:wrap}
+.theme-dot{width:30px;height:30px;border-radius:50%;border:3px solid #fff4;cursor:pointer}
+.theme-dot.selected{outline:2px solid white;outline-offset:3px}
+.toast{
+ position:fixed;right:20px;bottom:20px;background:#1d2c29;
+ border:1px solid var(--green);padding:13px 18px;border-radius:10px;
+ display:none;z-index:10;
+}
+.mobile-menu{display:none}
+@media(max-width:950px){
+ .grid{grid-template-columns:repeat(2,1fr)}
+ .result-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:700px){
+ .sidebar{width:65px;padding:15px 7px}
+ .brand h2,.brand p,.nav-btn span,.nav-title,.sidebar-footer{display:none}
+ .brand-icon{font-size:26px}
+ .nav-btn{justify-content:center;padding:13px 5px;font-size:19px}
+ .main{padding:16px}
+ .topbar h1{font-size:19px}
+ .grid{grid-template-columns:repeat(2,1fr);gap:9px}
+ .card{padding:14px}
+ .result-grid{grid-template-columns:1fr}
+ .achievement-grid{grid-template-columns:repeat(2,1fr)}
+ .metrics{grid-template-columns:repeat(2,1fr)}
+ .welcome h2{font-size:19px}
+ .welcome-icon{font-size:40px}
+ .typing-text{font-size:17px;padding:15px}
+ .key{min-width:20px;height:32px;font-size:9px;padding:0 4px}
+ .key.space{width:130px}
+}
+@media(max-width:420px){
+ .grid{grid-template-columns:1fr 1fr}
+ .stat-value{font-size:22px}
+ .practice-options select{min-width:100px;flex:1}
+ .top-profile span{display:none}
+}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<aside class="sidebar">
+ <div class="brand">
+  <div class="brand-icon">👑</div>
+  <h2>VIP TYPING</h2>
+  <p>MASTER EDITION</p>
+ </div>
+
+ <div class="nav-title">MAIN MENU</div>
+ <button class="nav-btn active" data-page="dashboard">🏠 <span>Dashboard</span></button>
+ <button class="nav-btn" data-page="practice">⌨️ <span>Typing Practice</span></button>
+ <button class="nav-btn" data-page="results">📊 <span>My Results</span></button>
+ <button class="nav-btn" data-page="achievements">🏆 <span>Achievements</span></button>
+
+ <div class="nav-title">PREFERENCES</div>
+ <button class="nav-btn" data-page="settings">⚙️ <span>Settings</span></button>
+ <button class="nav-btn" data-page="about">👤 <span>About</span></button>
+
+ <div class="sidebar-footer">
+  VIP Typing Master v7.0<br>
+  Created by Rohid Zakhil<br>
+  © 2026 All Rights Reserved
+ </div>
+</aside>
+
+<main class="main">
+ <header class="topbar">
+  <h1 id="pageTitle">Dashboard</h1>
+  <div class="top-profile">
+   <div>
+    <b id="topName">Rohid Zakhil</b><br>
+    <small class="muted">Typing Student</small>
+   </div>
+   <img src="assets/image/rohid.jpg" class="avatar"
+    alt="Profile photo"
+    onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+   
+  </div>
+ </header>
+
+ <!-- DASHBOARD -->
+ <section class="page active" id="dashboard">
+  <div class="card welcome">
+   <div>
+    <h2>Welcome Back, <span class="gold" id="welcomeName">Rohid Zakhil</span> 👑</h2>
+    <p>Improve your typing speed. Practice every day!</p>
+    <div class="action-buttons">
+     <button class="gold-btn" onclick="showPage('practice')">Start Typing →</button>
+    </div>
+   </div>
+   <div class="welcome-icon">⌨️</div>
+  </div>
+
+  <div class="grid">
+   <div class="card stat-card">
+    <div class="stat-icon">⚡</div>
+    <div class="stat-value" id="dashWpm">0</div>
+    <div class="stat-label">Best WPM</div>
+   </div>
+   <div class="card stat-card">
+    <div class="stat-icon">🎯</div>
+    <div class="stat-value" id="dashAccuracy">0%</div>
+    <div class="stat-label">Best Accuracy</div>
+   </div>
+   <div class="card stat-card">
+    <div class="stat-icon">⭐</div>
+    <div class="stat-value" id="dashXp">0</div>
+    <div class="stat-label">Total XP</div>
+   </div>
+   <div class="card stat-card">
+    <div class="stat-icon">🏁</div>
+    <div class="stat-value" id="dashTests">0</div>
+    <div class="stat-label">Tests Completed</div>
+   </div>
+  </div>
+
+  <div class="card">
+   <h2 class="section-title">🎯 Daily Goal</h2>
+   <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+    <span class="muted">Today's completed tests</span>
+    <b id="goalText">0 / 5</b>
+   </div>
+   <div class="progress"><div class="progress-fill" id="goalProgress"></div></div>
+  </div>
+
+  <div class="card">
+   <h2 class="section-title">📈 Weekly Performance</h2>
+   <div class="chart" id="weeklyChart"></div>
+  </div>
+
+  <div class="card">
+   <h2 class="section-title">👤 Your Profile</h2>
+   <div class="about-profile">
+    <img src="assets/image/rohid.jpg" class="about-photo"
+     alt="Rohid Zakhil"
+     onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+   <!--  <div class="avatar avatar-fallback" hidden style="width:110px;height:110px;font-size:45px">👑</div> -->
+    <div>
+     <h2 id="dashboardProfileName">Rohid Zakhil</h2>
+     <p class="muted">Typing Student</p>
+     <p class="gold" id="dashboardLevel">Level 1</p>
+    </div>
+   </div>
+  </div>
+ </section>
+
+ <!-- PRACTICE -->
+ <section class="page" id="practice">
+  <div class="card">
+   <h2 class="section-title">⌨️ Typing Practice</h2>
+
+   <div class="practice-options">
+    <select id="languageSelect">
+     <option value="English">English</option>
+     <option value="Pashto">Pashto</option>
+    </select>
+    <select id="difficultySelect">
+     <option value="Easy">Easy</option>
+     <option value="Medium">Medium</option>
+     <option value="Hard">Hard</option>
+    </select>
+    <select id="timeSelect">
+     <option value="30">30 Seconds</option>
+     <option value="60" selected>60 Seconds</option>
+     <option value="120">120 Seconds</option>
+    </select>
+   </div>
+
+   <div class="metrics">
+    <div class="metric"><strong id="timer">60</strong><small>Time Left</small></div>
+    <div class="metric"><strong id="wpm">0</strong><small>WPM</small></div>
+    <div class="metric"><strong id="accuracy">100%</strong><small>Accuracy</small></div>
+    <div class="metric"><strong id="errors">0</strong><small>Errors</small></div>
+   </div>
+
+   <div class="typing-text" id="textDisplay"></div>
+   <textarea id="typingInput" placeholder="Click here and start typing..." spellcheck="false"></textarea>
+
+   <div class="metrics">
+    <div class="metric"><strong id="characters">0</strong><small>Characters</small></div>
+    <div class="metric"><strong id="correctChars">0</strong><small>Correct</small></div>
+    <div class="metric"><strong id="liveXp">0</strong><small>Potential XP</small></div>
+    <div class="metric"><strong id="levelDisplay">1</strong><small>Level</small></div>
+   </div>
+
+   <div class="action-buttons">
+    <button class="gold-btn" id="newTestBtn">🔄 New Test</button>
+    <button class="dark-btn" id="finishBtn">Finish Test</button>
+   </div>
+  </div>
+
+  <div class="card">
+   <h2 class="section-title">🎹 Virtual Keyboard</h2>
+   <p class="muted" style="font-size:12px">Gold = Next key | Green = Correct | Red = Wrong</p>
+   <div class="keyboard" id="keyboard"></div>
+  </div>
+
+  <div class="card">
+   <h2 class="section-title">🖐️ Finger Position Guide</h2>
+   <div class="finger-guide">
+    <div class="finger">Left Little Finger</div>
+    <div class="finger">Left Ring Finger</div>
+    <div class="finger">Left Middle Finger</div>
+    <div class="finger">Left Index Finger</div>
+    <div class="finger">Right Index Finger</div>
+    <div class="finger">Right Middle Finger</div>
+    <div class="finger">Right Ring Finger</div>
+    <div class="finger">Right Little Finger</div>
+   </div>
+  </div>
+ </section>
+
+ <!-- RESULTS -->
+ <section class="page" id="results">
+  <div class="card">
+   <h2 class="section-title">📊 My Typing Results</h2>
+   <div id="resultsCards" class="result-grid"></div>
+   <div class="action-buttons">
+    <button class="gold-btn" id="csvBtn">📥 Export CSV</button>
+    <button class="danger-btn" id="clearResultsBtn">Clear Results</button>
+   </div>
+  </div>
+ </section>
+
+ <!-- ACHIEVEMENTS -->
+ <section class="page" id="achievements">
+  <div class="card">
+   <h2 class="section-title">🏆 Achievements</h2>
+   <div class="achievement-grid" id="achievementGrid"></div>
+  </div>
+ </section>
+
+ <!-- SETTINGS -->
+ <section class="page" id="settings">
+  <div class="card">
+   <h2 class="section-title">⚙️ Settings</h2>
+
+   <div class="field">
+    <label>Your Profile Name</label>
+    <input type="text" id="profileNameInput" placeholder="Enter your name">
+   </div>
+
+   <div class="setting-row">
+    <div><b>Typing Sound</b><br><small class="muted">Play sound when typing</small></div>
+    <input type="checkbox" class="switch" id="soundToggle" checked>
+   </div>
+
+   <div class="setting-row">
+    <div><b>Interface Language</b><br><small class="muted">Choose interface language</small></div>
+    <select id="uiLanguage">
+     <option value="English">English</option>
+     <option value="Pashto">Pashto</option>
+    </select>
+   </div>
+
+   <div class="setting-row">
+    <div><b>Daily Goal</b><br><small class="muted">Number of tests per day</small></div>
+    <input type="number" id="dailyGoalInput" min="1" max="50" value="5" style="width:80px">
+   </div>
+
+   <h3 class="section-title" style="margin-top:22px">🎨 Choose Theme</h3>
+   <div class="theme-options">
+    <button class="theme-dot" style="background:#e7b84b" data-theme="gold" title="Gold"></button>
+    <button class="theme-dot" style="background:#438cff" data-theme="blue" title="Blue"></button>
+    <button class="theme-dot" style="background:#a56aff" data-theme="purple" title="Purple"></button>
+    <button class="theme-dot" style="background:#20c982" data-theme="green" title="Green"></button>
+    <button class="theme-dot" style="background:#ff5263" data-theme="red" title="Red"></button>
+   </div>
+
+   <div class="action-buttons">
+    <button class="gold-btn" id="saveSettingsBtn">Save Settings</button>
+   </div>
+  </div>
+
+  <div class="card">
+   <h2 class="section-title">💾 Backup & Restore</h2>
+   <p class="muted">Save your profile and results or restore a previous backup.</p>
+   <div class="action-buttons">
+    <button class="gold-btn" id="backupBtn">Download Backup</button>
+    <button class="dark-btn" id="restoreBtn">Restore Backup</button>
+    <input type="file" id="restoreFile" accept=".json,application/json" hidden>
+   </div>
+  </div>
+ </section>
+
+ <!-- ABOUT -->
+ <section class="page" id="about">
+  <div class="card">
+   <h2 class="section-title">👑 About VIP Typing Master</h2>
+   <div class="about-profile">
+    <img src="assets/image/rohid.jpg" class="about-photo"
+     alt="Rohid Zakhil"
+     onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+   
+    <div>
+     <h2 class="gold">VIP Typing Master V7.0</h2>
+     <p class="muted">Created by Rohid Zakhil</p>
+     <p>Computer Science Student</p>
+    </div>
+   </div>
+   <hr style="border-color:var(--border);margin:22px 0">
+   <p>VIP Typing Master is a typing practice application designed to improve typing speed, accuracy and keyboard skills.</p>
+   <p class="muted">Features: English & Pashto practice, virtual keyboard, typing statistics, XP system, achievements, themes and data backup.</p>
+   <p class="gold">© 2026 Rohid Zakhil. All Rights Reserved.</p>
+  </div>
+ </section>
+
+</main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* =========================
+   STORAGE AND PROFILE
+========================= */
+const $ = id => document.getElementById(id);
+
+const defaultProfile = {
+ name:"Rohid Zakhil",
+ xp:0,
+ sound:true,
+ uiLanguage:"English",
+ dailyGoal:5,
+ theme:"gold"
+};
+
+function loadJSON(key,fallback){
+ try{
+  const value=JSON.parse(localStorage.getItem(key));
+  return value ?? fallback;
+ }catch(e){return fallback}
+}
+
+let profile={...defaultProfile,...loadJSON("vipTypingProfile",{})};
+let savedResults=loadJSON("vipTypingResults",[]);
+if(!Array.isArray(savedResults)) savedResults=[];
+
+let currentPage="dashboard";
+let targetText="";
+let startedAt=null;
+let timerInterval=null;
+let timeLeft=60;
+let duration=60;
+let finished=false;
+let audioContext=null;
+let lastErrors=0;
+
+/* =========================
+   TEXTS
+========================= */
+const passages={
+ English:{
+  Easy:[
+   "Learning to type is a useful skill. Practice every day and improve your speed.",
+   "A good student works hard and learns something new every day.",
+   "Computer skills help people communicate, learn and solve problems."
+  ],
+  Medium:[
+   "Technology has changed the way people communicate, study, work and share information around the world.",
+   "Consistent practice improves typing speed, accuracy and confidence. Small steps can create great results.",
+   "Computer science teaches us how to solve problems through logical thinking and creative programming."
+  ],
+  Hard:[
+   "Professional development requires patience, discipline, creativity, problem-solving skills and consistent daily practice.",
+   "A computer system processes information through hardware and software, following instructions to complete different tasks.",
+   "Successful programmers analyze complex problems, design efficient solutions and test their applications carefully."
+  ]
+ },
+ Pashto:{
+  Easy:[
+   "کمپيوټر د زده کړې او کار لپاره يوه مهمه وسيله ده.",
+   "هره ورځ تمرين وکړه او خپل مهارتونه پياوړي کړه.",
+   "زده کړه د انسان د پرمختګ لپاره ډېره مهمه ده."
+  ],
+  Medium:[
+   "کمپيوټر ساينس د ستونزو د حل لپاره منطقي فکر او پروګرام جوړونې مهارتونه رامنځته کوي.",
+   "د برياليتوب لپاره دوامداره هڅه، صبر، نظم او ورځنی تمرين ډېر ارزښت لري.",
+   "د معلوماتي ټکنالوژۍ په مرسته خلک په اسانۍ سره معلومات ترلاسه او له يو بل سره اړيکې نيسي."
+  ],
+  Hard:[
+   "يو مسلکي پروګرامر بايد د ستونزو د تحليل، منطقي فکر، ډيټابېس، شبکو او سافټوير جوړونې وړتيا ولري.",
+   "د کمپيوټر ساينس زده کړه انسان ته دا توان ورکوي چې نوې ټکنالوژۍ وپېژني او د واقعي ژوند ستونزې حل کړي.",
+   "د معلوماتو خوندي ساتل، د شبکو مديريت او د سافټوير اغېزمن جوړول د کمپيوټر ساينس مهمې برخې دي."
+  ]
+ }
+};
+
+/* =========================
+   NAVIGATION
+========================= */
+function showPage(page){
+ currentPage=page;
+ document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+ $(page).classList.add("active");
+
+ document.querySelectorAll(".nav-btn").forEach(b=>{
+  b.classList.toggle("active",b.dataset.page===page);
+ });
+
+ const titles={
+  dashboard:"Dashboard",
+  practice:"Typing Practice",
+  results:"My Results",
+  achievements:"Achievements",
+  settings:"Settings",
+  about:"About"
+ };
+ $("pageTitle").textContent=titles[page]||"VIP Typing Master";
+
+ if(page==="results") renderResults();
+ if(page==="achievements") renderAchievements();
+ if(page==="dashboard") updateDashboard();
+}
+
+document.querySelectorAll(".nav-btn").forEach(btn=>{
+ btn.addEventListener("click",()=>showPage(btn.dataset.page));
+});
+
+/* =========================
+   PROFILE
+========================= */
+function saveProfile(){
+ localStorage.setItem("vipTypingProfile",JSON.stringify(profile));
+}
+
+function updateProfileUI(){
+ $("topName").textContent=profile.name;
+ $("welcomeName").textContent=profile.name;
+ $("dashboardProfileName").textContent=profile.name;
+ $("profileNameInput").value=profile.name;
+ $("soundToggle").checked=profile.sound;
+ $("uiLanguage").value=profile.uiLanguage;
+ $("dailyGoalInput").value=profile.dailyGoal;
+ applyTheme(profile.theme);
+}
+
+function toast(message){
+ const el=$("toast");
+ el.textContent=message;
+ el.style.display="block";
+ clearTimeout(toast.timeout);
+ toast.timeout=setTimeout(()=>el.style.display="none",2500);
+}
+
+/* =========================
+   THEMES
+========================= */
+const themes={
+ gold:"#e7b84b",
+ blue:"#438cff",
+ purple:"#a56aff",
+ green:"#20c982",
+ red:"#ff5263"
+};
+
+function applyTheme(theme){
+ const color=themes[theme]||themes.gold;
+ document.documentElement.style.setProperty("--gold",color);
+ document.querySelectorAll(".theme-dot").forEach(btn=>{
+  btn.classList.toggle("selected",btn.dataset.theme===theme);
+ });
+}
+
+document.querySelectorAll(".theme-dot").forEach(btn=>{
+ btn.addEventListener("click",()=>{
+  profile.theme=btn.dataset.theme;
+  applyTheme(profile.theme);
+  saveProfile();
+ });
+});
+
+/* =========================
+   LEVEL AND XP
+========================= */
+function getLevel(xp=profile.xp){
+ return Math.floor(Math.max(0,xp)/100)+1;
+}
+
+function getLevelProgress(){
+ return Math.max(0,profile.xp)%100;
+}
+
+/* =========================
+   PRACTICE ENGINE
+========================= */
+function choosePassage(){
+ const language=$("languageSelect").value;
+ const difficulty=$("difficultySelect").value;
+ const list=passages[language][difficulty];
+ return list[Math.floor(Math.random()*list.length)];
+}
+
+function newTest(){
+ clearInterval(timerInterval);
+ duration=Number($("timeSelect").value);
+ timeLeft=duration;
+ finished=false;
+ startedAt=null;
+ lastErrors=0;
+ targetText=choosePassage();
+
+ $("typingInput").value="";
+ $("typingInput").disabled=false;
+ $("typingInput").placeholder="Click here and start typing...";
+ $("timer").textContent=timeLeft;
+ $("wpm").textContent="0";
+ $("accuracy").textContent="100%";
+ $("errors").textContent="0";
+ $("characters").textContent="0";
+ $("correctChars").textContent="0";
+ $("liveXp").textContent="0";
+ $("levelDisplay").textContent=getLevel();
+
+ renderPassage();
+ renderKeyboard();
+}
+
+function renderPassage(){
+ const display=$("textDisplay");
+ display.innerHTML="";
+ [...targetText].forEach((char,index)=>{
+  const span=document.createElement("span");
+  span.textContent=char;
+  if(index===0) span.classList.add("current");
+  display.appendChild(span);
+ });
+}
+
+function renderKeyboard(){
+ const rows=["1234567890","QWERTYUIOP","ASDFGHJKL","ZXCVBNM"];
+ const keyboard=$("keyboard");
+ keyboard.innerHTML="";
+
+ rows.forEach(row=>{
+  const rowEl=document.createElement("div");
+  rowEl.className="key-row";
+  [...row].forEach(key=>{
+   const el=document.createElement("div");
+   el.className="key";
+   el.dataset.key=key.toLowerCase();
+   el.textContent=key;
+   rowEl.appendChild(el);
+  });
+  keyboard.appendChild(rowEl);
+ });
+
+ const bottom=document.createElement("div");
+ bottom.className="key-row";
+ const space=document.createElement("div");
+ space.className="key space";
+ space.dataset.key=" ";
+ space.textContent="SPACE";
+ bottom.appendChild(space);
+ keyboard.appendChild(bottom);
+}
+
+function updateKeyboard(nextChar){
+ document.querySelectorAll(".key").forEach(k=>{
+  k.classList.remove("next");
+ });
+ if(nextChar===undefined)return;
+ const key=nextChar===" "?" ":nextChar.toLowerCase();
+ const el=[...document.querySelectorAll(".key")].find(k=>k.dataset.key===key);
+ if(el)el.classList.add("next");
+}
+
+function playTypingSound(){
+ if(!profile.sound)return;
+ try{
+  audioContext=audioContext||new(window.AudioContext||window.webkitAudioContext)();
+  const oscillator=audioContext.createOscillator();
+  const gain=audioContext.createGain();
+  oscillator.connect(gain);
+  gain.connect(audioContext.destination);
+  oscillator.frequency.value=620;
+  gain.gain.value=.025;
+  oscillator.start();
+  oscillator.stop(audioContext.currentTime+.035);
+ }catch(e){}
+}
+
+function startTimer(){
+ if(startedAt!==null)return;
+ startedAt=Date.now();
+
+ timerInterval=setInterval(()=>{
+  if(finished)return;
+  const elapsed=Math.floor((Date.now()-startedAt)/1000);
+  timeLeft=Math.max(0,duration-elapsed);
+  $("timer").textContent=timeLeft;
+  updateStats();
+
+  if(timeLeft<=0)finishTest();
+ },250);
+}
+
+function updateStats(){
+ const typed=$("typingInput").value;
+ let correct=0;
+ let errors=0;
+
+ for(let i=0;i<typed.length;i++){
+  if(typed[i]===targetText[i])correct++;
+  else errors++;
+ }
+
+ const elapsed=startedAt===null?0:Math.max(1,(Date.now()-startedAt)/60000);
+ const wpm=Math.round((correct/5)/elapsed)||0;
+ const accuracy=typed.length?Math.round(correct/typed.length*100):100;
+ const xp=Math.max(0,Math.round(correct/5));
+
+ $("wpm").textContent=wpm;
+ $("accuracy").textContent=accuracy+"%";
+ $("errors").textContent=errors;
+ $("characters").textContent=typed.length;
+ $("correctChars").textContent=correct;
+ $("liveXp").textContent=xp;
+
+ lastErrors=errors;
+ return {typed,correct,errors,wpm,accuracy,xp};
+}
+
+$("typingInput").addEventListener("input",()=>{
+ if(finished)return;
+ startTimer();
+ const stats=updateStats();
+ const typed=$("typingInput").value;
+
+ if(typed.length>0)playTypingSound();
+
+ const spans=$("textDisplay").querySelectorAll("span");
+ spans.forEach((span,index)=>{
+  span.classList.remove("correct","wrong","current");
+  if(index<typed.length){
+   span.classList.add(typed[index]===targetText[index]?"correct":"wrong");
+  }else if(index===typed.length){
+   span.classList.add("current");
+  }
+ });
+
+ updateKeyboard(targetText[typed.length]);
+
+ if(typed.length>=targetText.length)finishTest();
+});
+
+$("typingInput").addEventListener("keydown",e=>{
+ if(e.key==="Tab"){
+  e.preventDefault();
+  $("typingInput").value+="    ";
+  $("typingInput").dispatchEvent(new Event("input"));
+ }
+});
+
+function finishTest(){
+ if(finished)return;
+ finished=true;
+ clearInterval(timerInterval);
+ $("typingInput").disabled=true;
+
+ const stats=updateStats();
+ const xpEarned=Math.max(5,Math.round(stats.correct/5));
+ profile.xp+=xpEarned;
+
+ const result={
+  date:new Date().toLocaleString(),
+  timestamp:Date.now(),
+  language:$("languageSelect").value,
+  difficulty:$("difficultySelect").value,
+  wpm:stats.wpm,
+  accuracy:stats.accuracy,
+  errors:stats.errors,
+  characters:stats.typed.length,
+  xp:xpEarned
+ };
+
+ savedResults.unshift(result);
+ savedResults=savedResults.slice(0,100);
+
+ localStorage.setItem("vipTypingResults",JSON.stringify(savedResults));
+ saveProfile();
+ updateDashboard();
+ renderResults();
+ renderAchievements();
+
+ toast("Test completed! You earned "+xpEarned+" XP.");
+}
+
+$("newTestBtn").addEventListener("click",newTest);
+$("finishBtn").addEventListener("click",finishTest);
+
+/* =========================
+   RESULTS CARDS
+========================= */
+function renderResults(){
+ const container=$("resultsCards");
+ container.innerHTML="";
+
+ if(savedResults.length===0){
+  const empty=document.createElement("div");
+  empty.className="empty";
+  empty.style.gridColumn="1/-1";
+  empty.textContent="No results yet. Complete your first typing test!";
+  container.appendChild(empty);
+  return;
+ }
+
+ savedResults.forEach((result,index)=>{
+  const card=document.createElement("div");
+  card.className="result-card";
+  card.style.animationDelay=(index*.05)+"s";
+
+  const top=document.createElement("div");
+  top.className="result-top";
+
+  const date=document.createElement("small");
+  date.className="muted";
+  date.textContent=result.date||"Typing Test";
+
+  const number=document.createElement("span");
+  number.className="gold";
+  number.textContent="#"+(index+1);
+
+  top.append(date,number);
+
+  const wpm=document.createElement("div");
+  wpm.className="result-wpm";
+  wpm.textContent=(result.wpm||0)+" WPM";
+
+  const details=document.createElement("div");
+  details.className="result-details";
+
+  const fields=[
+   ["Language",result.language||"-"],
+   ["Difficulty",result.difficulty||"-"],
+   ["Accuracy",(result.accuracy??0)+"%"],
+   ["Errors",result.errors??0],
+   ["Characters",result.characters??0],
+   ["XP Earned","+"+(result.xp??0)]
+  ];
+
+  fields.forEach(([label,value])=>{
+   const item=document.createElement("div");
+   const small=document.createElement("small");
+   small.textContent=label;
+   const bold=document.createElement("b");
+   bold.textContent=value;
+   item.append(small,bold);
+   details.appendChild(item);
+  });
+
+  card.append(top,wpm,details);
+  container.appendChild(card);
+ });
+}
+
+/* =========================
+   CSV EXPORT
+========================= */
+$("csvBtn").addEventListener("click",()=>{
+ if(savedResults.length===0){
+  toast("There are no results to export.");
+  return;
+ }
+
+ const headers=["Date","Language","Difficulty","WPM","Accuracy","Errors","Characters","XP"];
+ const rows=savedResults.map(r=>[
+  r.date||"",
+  r.language||"",
+  r.difficulty||"",
+  r.wpm??0,
+  r.accuracy??0,
+  r.errors??0,
+  r.characters??0,
+  r.xp??0
+ ]);
+
+ const csv=[headers,...rows].map(row=>
+  row.map(value=>'"'+String(value).replace(/"/g,'""')+'"').join(",")
+ ).join("\r\n");
+
+ const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"});
+ const url=URL.createObjectURL(blob);
+ const link=document.createElement("a");
+ link.href=url;
+ link.download="VIP-Typing-Master-Results.csv";
+ document.body.appendChild(link);
+ link.click();
+ link.remove();
+ URL.revokeObjectURL(url);
+ toast("CSV file exported successfully.");
+});
+
+$("clearResultsBtn").addEventListener("click",()=>{
+ if(!confirm("Are you sure you want to delete all typing results?"))return;
+ savedResults=[];
+ localStorage.setItem("vipTypingResults",JSON.stringify(savedResults));
+ renderResults();
+ updateDashboard();
+ renderAchievements();
+ toast("All results cleared.");
+});
+
+/* =========================
+   DASHBOARD
+========================= */
+function updateDashboard(){
+ const bestWpm=savedResults.length?Math.max(...savedResults.map(r=>Number(r.wpm)||0)):0;
+ const bestAccuracy=savedResults.length?Math.max(...savedResults.map(r=>Number(r.accuracy)||0)):0;
+
+ $("dashWpm").textContent=bestWpm;
+ $("dashAccuracy").textContent=bestAccuracy+"%";
+ $("dashXp").textContent=profile.xp;
+ $("dashTests").textContent=savedResults.length;
+ $("dashboardLevel").textContent="Level "+getLevel();
+
+ const today=new Date().toDateString();
+ const todayCount=savedResults.filter(r=>{
+  const timestamp=r.timestamp||Date.parse(r.date);
+  return timestamp&&!Number.isNaN(timestamp)&&new Date(timestamp).toDateString()===today;
+ }).length;
+
+ const goal=Math.max(1,Number(profile.dailyGoal)||5);
+ $("goalText").textContent=todayCount+" / "+goal;
+ $("goalProgress").style.width=Math.min(100,todayCount/goal*100)+"%";
+
+ renderWeeklyChart();
+}
+
+function renderWeeklyChart(){
+ const chart=$("weeklyChart");
+ chart.innerHTML="";
+ const days=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+ const now=new Date();
+ const values=[];
+
+ for(let i=6;i>=0;i--){
+  const day=new Date(now);
+  day.setDate(now.getDate()-i);
+  const key=day.toDateString();
+
+  const count=savedResults.filter(r=>{
+   const timestamp=r.timestamp||Date.parse(r.date);
+   return timestamp&&!Number.isNaN(timestamp)&&new Date(timestamp).toDateString()===key;
+  }).length;
+
+  values.push({label:days[day.getDay()],count});
+ }
+
+ const max=Math.max(1,...values.map(v=>v.count));
+
+ values.forEach(item=>{
+  const col=document.createElement("div");
+  col.className="chart-col";
+
+  const bar=document.createElement("div");
+  bar.className="chart-bar";
+  bar.style.height=(item.count/max*130)+"px";
+  bar.title=item.count+" tests";
+
+  const number=document.createElement("div");
+  number.className="muted";
+  number.style.fontSize="10px";
+  number.textContent=item.count;
+
+  const label=document.createElement("small");
+  label.textContent=item.label;
+
+  col.append(number,bar,label);
+  chart.appendChild(col);
+ });
+}
+
+/* =========================
+   ACHIEVEMENTS
+========================= */
+const achievements=[
+ {id:"first",icon:"🥇",name:"First Test",description:"Complete your first test",check:()=>savedResults.length>=1},
+ {id:"five",icon:"🔥",name:"Getting Started",description:"Complete 5 tests",check:()=>savedResults.length>=5},
+ {id:"ten",icon:"🏅",name:"Dedicated Typist",description:"Complete 10 tests",check:()=>savedResults.length>=10},
+ {id:"speed30",icon:"⚡",name:"Speed 30",description:"Reach 30 WPM",check:()=>savedResults.some(r=>r.wpm>=30)},
+ {id:"speed50",icon:"🚀",name:"Speed 50",description:"Reach 50 WPM",check:()=>savedResults.some(r=>r.wpm>=50)},
+ {id:"speed80",icon:"👑",name:"Speed 80",description:"Reach 80 WPM",check:()=>savedResults.some(r=>r.wpm>=80)},
+ {id:"accuracy",icon:"🎯",name:"Perfect Focus",description:"Reach 100% accuracy",check:()=>savedResults.some(r=>r.accuracy===100)},
+ {id:"xp",icon:"⭐",name:"XP Collector",description:"Earn 500 XP",check:()=>profile.xp>=500},
+ {id:"level5",icon:"💎",name:"Level 5",description:"Reach level 5",check:()=>getLevel()>=5}
+];
+
+function renderAchievements(){
+ const grid=$("achievementGrid");
+ grid.innerHTML="";
+
+ achievements.forEach(item=>{
+  const unlocked=item.check();
+  const card=document.createElement("div");
+  card.className="achievement"+(unlocked?"":" locked");
+
+  const icon=document.createElement("div");
+  icon.className="medal";
+  icon.textContent=item.icon;
+
+  const title=document.createElement("h3");
+  title.textContent=item.name;
+
+  const desc=document.createElement("p");
+  desc.textContent=item.description;
+
+  const status=document.createElement("p");
+  status.style.marginTop="9px";
+  status.style.color=unlocked?"var(--green)":"var(--muted)";
+  status.textContent=unlocked?"✓ Unlocked":"🔒 Locked";
+
+  card.append(icon,title,desc,status);
+  grid.appendChild(card);
+ });
+}
+
+/* =========================
+   SETTINGS
+========================= */
+$("saveSettingsBtn").addEventListener("click",()=>{
+ const name=$("profileNameInput").value.trim();
+ if(name)profile.name=name;
+
+ profile.sound=$("soundToggle").checked;
+ profile.uiLanguage=$("uiLanguage").value;
+ profile.dailyGoal=Math.max(1,Math.min(50,Number($("dailyGoalInput").value)||5));
+
+ saveProfile();
+ updateProfileUI();
+ updateDashboard();
+ toast("Settings saved successfully.");
+});
+
+$("soundToggle").addEventListener("change",()=>{
+ profile.sound=$("soundToggle").checked;
+ saveProfile();
+});
+
+/* =========================
+   BACKUP AND RESTORE
+========================= */
+$("backupBtn").addEventListener("click",()=>{
+ const backup={
+  app:"VIP Typing Master",
+  version:"7.0",
+  createdAt:new Date().toISOString(),
+  profile,
+  results:savedResults
+ };
+
+ const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"});
+ const url=URL.createObjectURL(blob);
+ const link=document.createElement("a");
+ link.href=url;
+ link.download="VIP-Typing-Master-Backup.json";
+ document.body.appendChild(link);
+ link.click();
+ link.remove();
+ URL.revokeObjectURL(url);
+ toast("Backup downloaded.");
+});
+
+$("restoreBtn").addEventListener("click",()=>$("restoreFile").click());
+
+$("restoreFile").addEventListener("change",async e=>{
+ const file=e.target.files[0];
+ if(!file)return;
+
+ try{
+  const data=JSON.parse(await file.text());
+
+  if(!data.profile||!Array.isArray(data.results)){
+   throw new Error("Invalid backup file");
+  }
+
+  if(!confirm("Restore this backup? Current saved data will be replaced."))return;
+
+  profile={...defaultProfile,...data.profile};
+  savedResults=data.results;
+
+  saveProfile();
+  localStorage.setItem("vipTypingResults",JSON.stringify(savedResults));
+
+  updateProfileUI();
+  updateDashboard();
+  renderResults();
+  renderAchievements();
+
+  toast("Backup restored successfully.");
+ }catch(error){
+  alert("Could not restore this backup file.");
+ }finally{
+  e.target.value="";
+ }
+});
+
+/* =========================
+   LANGUAGE SELECT
+========================= */
+$("languageSelect").addEventListener("change",newTest);
+$("difficultySelect").addEventListener("change",newTest);
+$("timeSelect").addEventListener("change",newTest);
+
+/* =========================
+   INITIALIZE APP
+========================= */
+function initializeApp(){
+ updateProfileUI();
+ updateDashboard();
+ renderResults();
+ renderAchievements();
+ newTest();
+ showPage("dashboard");
+}
+
+initializeApp();
+</script>
+</body>
+</html>
